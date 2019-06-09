@@ -13,11 +13,28 @@ class SudokuUtil {
 	static final String ROWS = "ABCDEFGHI";
 	static final String COLS = "123456789";
 	// 3 *3 사각형 keys 
-	static final String[] SQUARE_ROWS = { "ABC", "DEF", "GHI" };
-	static final String[] SQUARE_COLS = { "123", "456", "789" };
+	private static final String[] SQUARE_ROWS = { "ABC", "DEF", "GHI" };
+	private static final String[] SQUARE_COLS = { "123", "456", "789" };
 	
+	/** 해시 맵의 key 만들기 : 좌표 */
 	public static String createKey(char row, char col) {
 		return row + "" + col;
+	}
+	
+	/** 스도쿠 해시맵 초기화 
+	 * @return A1 ~ I9 까지의 key 를 갖는 스도쿠 게임 판 
+	 * ex) "A1": "123456789"
+	 */
+	public static HashMap<String, SudokuValue> getValueMap(){
+		HashMap<String, SudokuValue> valueMap = new LinkedHashMap<String, SudokuValue>();
+		for(char row : ROWS.toCharArray()) {
+			for(char col : COLS.toCharArray()) {
+				String key = createKey(row, col);
+				valueMap.put(key, new SudokuValue());
+			}
+		}
+		
+		return valueMap;
 	}
 	
 	/** 현재 col 과 같은 행들 추출 
@@ -92,6 +109,7 @@ class SudokuUtil {
 		return unitListMap;
 	}
 	
+	
 	/** 현재 key 에 해당하는 중복을 제거해서 추출 : 1차원 set
 	 * @param unitListMap : 모든 unit 들을 담은 map
 	 * @param key : 현재 좌표 
@@ -140,7 +158,7 @@ class SudokuUtil {
 		return inputMap;
 	}
 	
-	/** 깊은 복사 실행 */
+	/** 입력 데이터 깊은 복사 */
 	public static HashMap<String, SudokuValue> deepCopyValueMap(HashMap<String, SudokuValue> valueMap){
 		HashMap<String, SudokuValue> cloneMap = new LinkedHashMap<String, SudokuValue>();
 		for(String key : valueMap.keySet()) {
@@ -151,7 +169,7 @@ class SudokuUtil {
 		return cloneMap;
 	}
 
-	// 출력 
+	/** 현재 valueMap 출력 */
 	public static void print(HashMap<String, SudokuValue> valueMap) {
 		System.out.println("-----------------------------------------------------------------");
 		for(char row : ROWS.toCharArray()) {
@@ -271,9 +289,4 @@ class SudokuUtil {
 		
 		return true;
 	}
-
-	public static void main(String[] args) {
-		
-	}
-
 }

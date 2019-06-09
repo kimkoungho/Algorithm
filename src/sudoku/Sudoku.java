@@ -1,12 +1,8 @@
 package sudoku;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +13,6 @@ public class Sudoku {
 
 	// 스도쿠 3가지 규칙에 해당하는 단위들 - 메모제이션  
 	private HashMap<String, EnumMap<UnitType, List<String>>> unitMap;
-
 	// 1개의 좌표에서 제약조건 전파 대상 좌표들 
 	private HashMap<String, Set<String>> peerSetMap; 
 	
@@ -34,22 +29,12 @@ public class Sudoku {
 		}
 	}
 	
-	
-	public HashMap<String, SudokuValue> getValueMap(){
-		HashMap<String, SudokuValue> valueMap = new LinkedHashMap<String, SudokuValue>();
-		for(char row : SudokuUtil.ROWS.toCharArray()) {
-			for(char col : SudokuUtil.COLS.toCharArray()) {
-				String key = SudokuUtil.createKey(row, col);
-				valueMap.put(key, new SudokuValue());
-			}
-		}
-		
-		return valueMap;
-	}
-	
 	/** 1번 전략 
 	 * - 값을 지운후, 특정 좌표에 값이 1개만 들어갈 수 있다면, peer 들에서 해당 값을 제거함 
-	 * */
+	 * @param key : 키 값 (좌표)
+	 * @param valueMap : 실제 스도쿠 값이 있는 해시맵 
+	 * @return 성공여부 (false : 스도쿠를 만들수 없는 경우)
+	 */
 	private boolean propagation(String key, HashMap<String, SudokuValue> valueMap) {
 		SudokuValue deleteTarget = valueMap.get(key);
 		// 실행 조건 : 좌표에 값이 1개일 때만 수행  
@@ -57,6 +42,7 @@ public class Sudoku {
 			return true;
 		}
 		
+		// 값이 1개 
 		char deleteValue = deleteTarget.getValues()[0];
 
 		// 제약 조건 전파 : 나와 같은 단위를 사용하는 모든 좌표들에서 값을 제거
@@ -72,7 +58,11 @@ public class Sudoku {
 	
 	/** 2번 전략  
 	 * - 현재 지운 값(value) 는 3가지 단위에서 1개씩은 존재해야함
-	 * */
+	 * @param key : 키 (좌표)
+	 * @param value : 값 (단위 별로 1개씩은 무조건 존재해야하는 값) 
+	 * @param valueMap : 실제 스도쿠 값이 있는 해시맵
+	 * @return 성공여부 (false : 스도쿠를 만들수 없는 경우) 
+	 */
 	private boolean checkUnitList(String key, char value, HashMap<String, SudokuValue> valueMap) {
 		EnumMap<UnitType, List<String>> unitListMap = unitMap.get(key);
 		
@@ -92,7 +82,6 @@ public class Sudoku {
 			} // value 가 가능한 좌표가 1개 : 값을 지정함 
 			else if(possibleKeyList.size() == 1) {
 				String targetKey = possibleKeyList.get(0);
-				SudokuValue targetValue = valueMap.get(targetKey);
 				return setValue(targetKey, value, valueMap);
 			}
 		}
@@ -102,6 +91,10 @@ public class Sudoku {
 	
 	/** 특정 좌표에 값을 지정  
 	 * - 값을 지정하는 것은 모든 후보들 중 value 를 제외한 값을 제거하는 것 
+	 * @param key : 키 (좌표)
+	 * @param value : 값 (지정하려는 값) 
+	 * @param valueMap : 실제 스도쿠 값이 있는 해시맵
+	 * @return 성공여부 (false : 스도쿠를 만들수 없는 경우) 
 	 */
 	public boolean setValue(String key, char value, HashMap<String, SudokuValue> valueMap) {
 		SudokuValue innerValue = valueMap.get(key);
@@ -122,8 +115,13 @@ public class Sudoku {
 	}
 	
 	
-	/** 특정 좌표에 값을 제거 
-	 * -  
+	/** 특정 좌표에 값을 제거
+	 * - 1번 전략 : 값을 지운후, 특정 좌표에 값이 1개만 들어갈 수 있다면, peer 들에서 해당 값을 제거함
+	 * - 2번 전략 : 현재 지운 값(value) 는 3가지 단위에서 1개씩은 존재해야함
+	 * @param key : 키 (좌표)
+	 * @param value : 값 (지우려고 하는 값) 
+	 * @param valueMap : 실제 스도쿠 값이 있는 해시맵
+	 * @return 성공여부 (false : 스도쿠를 만들수 없는 경우)   
 	 */
 	public boolean deleteValue(String key, char value, HashMap<String, SudokuValue> valueMap) {
 		SudokuValue innerValue = valueMap.get(key);
@@ -155,7 +153,11 @@ public class Sudoku {
 		return true;
 	}
 
-	/***/
+	/** 검색 
+	 * - 아직 답을 못 찾은 칸 중 가장 후보의 수가 적은 칸부터 DFS 로 검색을 수행  
+	 * @param valueMap : 실제 스도쿠 값이 있는 해시맵
+	 * @return 결과 해시맵 
+	 */
 	public HashMap<String, SudokuValue> search(HashMap<String, SudokuValue> valueMap) {
 		// 이미 완성 
 		if(SudokuUtil.validateResult(valueMap)) {
@@ -177,11 +179,11 @@ public class Sudoku {
 			}
 		}
 		
-		// 
-//		if(valueMap.get(targetKey) == null) {
-//			System.out.println(targetKey);
-//			System.out.println(valueMap);
-//		}
+
+		if(valueMap.get(targetKey) == null) {
+			System.err.println("not founded target : " + targetKey + "::"+valueMap);
+			return null;
+		}
 		
 		HashMap<String, SudokuValue> resultMap = null;
 		char[] targetValues = valueMap.get(targetKey).getValues();
@@ -208,97 +210,4 @@ public class Sudoku {
 		return resultMap;
 	}
 	
-	
-	// 테스트 
-//	public void initPostionPrint(String key) {
-//		// 실제 값 출력 
-//		System.out.println("\r\n스도쿠 값 ::" + valueMap.get(key));
-//		
-//		// 단위들 추출 
-//		EnumMap<UnitType, List<String>> unitListMap = unitMap.get(key);
-//		System.out.println("\r\n3가지 규칙에 근거한 같은 단위");
-//		System.out.println("같은 행 ::" + unitListMap.get(UnitType.ROW));
-//		System.out.println("같은 열 ::" + unitListMap.get(UnitType.COL));
-//		System.out.println("같은 사각형 ::" + unitListMap.get(UnitType.SQUARE));
-//		
-//		// 중복 제거한 좌표들 
-//		System.out.println("\r\n같은 단위들을 중복 제거 하여 평탄화 (flatten)");
-//		System.out.println(peerSetMap.get(key));
-//	}
-	
-	private static final String EASY_FILE_PATH = "./sudoku_input/easy50.txt";
-	private static final String HARD_FILE_PATH = "./sudoku_input/top95.txt";
-	private static final String HARDEST_FILE_PATH = "./sudoku_input/hardest.txt";
-	
-	private static List<String> getEasyInputList() throws IOException{
-		BufferedReader br = new BufferedReader(new FileReader(EASY_FILE_PATH));
-		
-		final String delimiter = "========";
-		List<String> inputList = new ArrayList<String>();
-		StringBuilder inputBuilder = new StringBuilder();
-		
-		String line = null;
-		while((line = br.readLine()) != null) {
-			if(delimiter.equals(line)) {
-				inputList.add(inputBuilder.toString());
-				inputBuilder = new StringBuilder();
-			}else {
-				inputBuilder.append(line);
-			}
-		}
-		return inputList;
-	}
-	
-	private static List<String> getHardInputList(String filePath) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(filePath));
-		
-		List<String> inputList = new ArrayList<String>();
-		String line = null;
-		while((line = br.readLine()) != null) {
-			inputList.add(line);
-		}
-		return inputList;
-	}
-	
-	// test
-	public static void main(String[] args) throws IOException {
-		Sudoku sudoku = new Sudoku();
-		
-//		List<String> easyInputList = getEasyInputList();
-//		for(String input : easyInputList) {
-//			HashMap<String, Character> inputMap = SudokuUtil.parseInput(input);
-//			for(String key : inputMap.keySet()) {
-//				sudoku.setValue(key, inputMap.get(key));
-//			}
-//			
-//			// validate 
-//			boolean result = SudokuUtil.validateResult(sudoku.getValueMap());
-//			if(result == false) {
-//				sudoku.print();
-//			}
-//		}
-		
-//		List<String> hardInputList = getHardInputList(HARD_FILE_PATH);
-		List<String> hardInputList = getHardInputList(HARDEST_FILE_PATH);
-		for(String input : hardInputList) {
-			HashMap<String, SudokuValue> valueMap = sudoku.getValueMap();
-			
-			HashMap<String, Character> inputMap = SudokuUtil.parseInput(input);
-			for(String key : inputMap.keySet()) {
-				sudoku.setValue(key, inputMap.get(key), valueMap);
-			}
-			
-			HashMap<String, SudokuValue> resultMap = sudoku.search(valueMap);
-			
-//			System.out.println("error ... \n" + input);
-			if(resultMap != null) {
-				SudokuUtil.print(resultMap);
-				System.out.println(SudokuUtil.validateResult(resultMap));
-			}else {
-				System.out.println("error ... \n" + input);
-				
-			}
-		}
-	}
-
 }

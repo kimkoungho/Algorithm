@@ -13,7 +13,7 @@ class SudokuValue {
 	
 	public SudokuValue(SudokuValue sudokuValue) {
 		this.length = sudokuValue.getLength();
-		this.values = sudokuValue.getValueString();
+		this.values = sudokuValue.toString();
 	}
 
 	// 후보에서 값을 제거
@@ -32,6 +32,7 @@ class SudokuValue {
 		return values.indexOf(value) > -1;
 	}
 	
+	// 현재 가능한 모든 후보자들 return 
 	public char[] getValues() {
 		char[] retValues = new char[this.getLength()];
 		int index = 0;
@@ -43,10 +44,6 @@ class SudokuValue {
 		}
 		return retValues;
 	}
-	
-	public String getValueString() {
-		return values;
-	}
 
 	// 후보들의 길이 반환
 	public int getLength() {
@@ -57,5 +54,4 @@ class SudokuValue {
 	public String toString() {
 		return values;
 	}
-	
 }
