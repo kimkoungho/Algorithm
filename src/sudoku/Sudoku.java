@@ -82,7 +82,9 @@ public class Sudoku {
 			} // value 가 가능한 좌표가 1개 : 값을 지정함 
 			else if(possibleKeyList.size() == 1) {
 				String targetKey = possibleKeyList.get(0);
-				return setValue(targetKey, value, valueMap);
+				if(!setValue(targetKey, value, valueMap)) {
+					return false;
+				}
 			}
 		}
 		

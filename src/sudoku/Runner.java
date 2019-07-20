@@ -1,6 +1,7 @@
 package sudoku;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -16,10 +17,13 @@ public class Runner {
 		//testPeerSet();
 		
 		List<String> inputList = InputReader.getEasyInputList();
-		inputList.addAll(InputReader.getHardInputList());
+//		inputList.addAll(InputReader.getHardInputList());
+		inputList = new ArrayList();
 		inputList.addAll(InputReader.getHardestInputList());
-
+		
 		for(String input : inputList) {
+			System.out.println(input);
+			
 			HashMap<String, SudokuValue> valueMap = SudokuUtil.getValueMap();
 			
 			HashMap<String, Character> inputMap = SudokuUtil.parseInput(input);
@@ -33,7 +37,9 @@ public class Runner {
 				System.out.println(SudokuUtil.validateResult(resultMap));
 			}else {
 				System.out.println("error ... \n" + input);	
+				throw new RuntimeException("");
 			}
+			return;
 		}
 		
 	}
