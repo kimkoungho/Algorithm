@@ -1,4 +1,4 @@
-package permutation;
+package etc.permutation;
 
 import java.util.Comparator;
 
@@ -30,7 +30,7 @@ public class Runner {
 //		selectPerm.printPermutationAll(inputs);
 //		removePerm.printPermutationAll(inputs);
 //		heapsPerm.printPermutationAll(inputs);
-//		johnsonPerm.printPermutationAll(inputs);	
+//		johnsonPerm.printPermutationAll(inputs);
 		
 		lexicographicPerm.printPermutationAll(inputs);
 	}

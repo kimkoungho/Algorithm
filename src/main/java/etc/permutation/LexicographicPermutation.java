@@ -1,9 +1,9 @@
-package permutation;
+package etc.permutation;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class LexicographicPermutation implements Permutation{
+public class LexicographicPermutation implements Permutation {
 	
 	private Comparator<Object> comparator;
 	

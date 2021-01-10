@@ -1,4 +1,4 @@
-package sudoku;
+package etc.sudoku;
 
 //스도쿠 특정 위치에 해당 하는 값 
 class SudokuValue {

@@ -1,4 +1,4 @@
-package permutation;
+package etc.permutation;
 
 public interface Permutation {
 

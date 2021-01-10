@@ -1,8 +1,8 @@
-package permutation;
+package etc.permutation;
 
 import java.util.Arrays;
 
-public class HeapsAlgorithmPermutation implements Permutation{
+public class HeapsAlgorithmPermutation implements Permutation {
 
 	private Object[] inputs;
 	

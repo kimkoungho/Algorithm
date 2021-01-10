@@ -1,8 +1,8 @@
-package permutation;
+package etc.permutation;
 
 import java.util.Arrays;
 
-public class RemovePermutation implements Permutation{
+public class RemovePermutation implements Permutation {
 
 	private Object[] inputs;
 	

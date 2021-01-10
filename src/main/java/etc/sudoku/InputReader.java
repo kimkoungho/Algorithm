@@ -1,6 +1,7 @@
-package sudoku;
+package etc.sudoku;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +13,9 @@ public class InputReader {
 	private static final String HARDEST_FILE_PATH = "./sudoku_input/hardest.txt";	
 	
 	public static List<String> getEasyInputList() throws IOException{
-		BufferedReader br = new BufferedReader(new FileReader(EASY_FILE_PATH));
+		ClassLoader classLoader = InputReader.class.getClassLoader();
+		File file = new File(classLoader.getResource(EASY_FILE_PATH).getFile());
+		BufferedReader br = new BufferedReader(new FileReader(file));
 		
 		final String delimiter = "========";
 		List<String> inputList = new ArrayList<String>();
@@ -31,7 +34,9 @@ public class InputReader {
 	}
 	
 	private static List<String> getCommonInputList(String filePath) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(filePath));
+		ClassLoader classLoader = InputReader.class.getClassLoader();
+		File file = new File(classLoader.getResource(filePath).getFile());
+		BufferedReader br = new BufferedReader(new FileReader(file));
 		
 		List<String> inputList = new ArrayList<String>();
 		String line = null;

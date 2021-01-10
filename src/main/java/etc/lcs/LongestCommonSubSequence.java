@@ -1,4 +1,4 @@
-package lcs;
+package etc.lcs;
 
 /** LCS : 최장 공통 부분 문자열 
  * - https://twinw.tistory.com/126

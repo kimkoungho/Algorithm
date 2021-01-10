@@ -4,3 +4,5 @@
 bin/*
 *.class
 /target/*
+/.idea/
+Algorithm.iml

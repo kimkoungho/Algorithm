@@ -1,8 +1,8 @@
-package permutation;
+package etc.permutation;
 
 import java.util.Arrays;
 
-public class SelectPermutation implements Permutation{
+public class SelectPermutation implements Permutation {
 
 	// input 배열 caching
 	private Object[]inputs;
