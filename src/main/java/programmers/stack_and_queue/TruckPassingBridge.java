@@ -82,6 +82,7 @@ public class TruckPassingBridge {
 
         Assert.assertEquals(19, solution.solution(5,5, new int[]{2, 2, 2, 2, 1, 1, 1, 1, 1}));
 
+        // 사실 1초이상 걸린다.
         long start = System.currentTimeMillis();
         int[] input4 = IntStream.range(0, 10000)
                 .map(i -> 1).toArray();
