@@ -2,11 +2,9 @@ package programmers.stack_and_queue;
 
 import org.junit.Assert;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Queue;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 // 다리를 지나는 트럭
