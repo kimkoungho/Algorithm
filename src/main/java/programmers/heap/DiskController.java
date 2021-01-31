@@ -1,20 +1,32 @@
 package programmers.heap;
 
 
-import java.util.PriorityQueue;
+import org.junit.Assert;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 // https://programmers.co.kr/learn/courses/30/lessons/42627
 public class DiskController {
-    static class Solution {
-        static class Job {
-            private int requestTime;
-            private int workingTime;
+    static class Job {
+        private int requestTime;
+        private int workingTime;
 
-            public Job(int requestTime, int workingTime) {
-                this.requestTime = requestTime;
-                this.workingTime = workingTime;
-            }
+        public Job(int requestTime, int workingTime) {
+            this.requestTime = requestTime;
+            this.workingTime = workingTime;
         }
+
+        public int getRequestTime() {
+            return requestTime;
+        }
+
+        public int getWorkingTime() {
+            return workingTime;
+        }
+    }
+
+    static class Solution {
 
         /**
          * @param jobs : 처리할 작업
@@ -25,28 +37,43 @@ public class DiskController {
          * ㄴ 작업을 하지 않을 때에는 먼저 들어온 것 부터 처리
          */
         public int solution(int[][] jobs) {
-            // 초기화
-            PriorityQueue<Job> queue = new PriorityQueue<>();
+            // 입력된 jobs 를 요청시간으로 정렬
+            LinkedList<Job> sortedJobList = Arrays.stream(jobs)
+                    .map(jobArr -> new Job(jobArr[0], jobArr[1]))
+                    .sorted(Comparator.comparing(Job::getRequestTime))
+                    .collect(Collectors.toCollection(LinkedList::new));
 
-            for(int i=0; i<jobs.length; i++) {
-                if (jobs[i][0] == 0) {
-
-                }
-            }
-
-
+            // 실행할 job 이 담긴 queue
+            PriorityQueue<Job> jobReadyQueue = new PriorityQueue<Job>(Comparator.comparing(Job::getWorkingTime));
 
             int currentTime = 0;
-            // 요청 시간이 가장 작은 것 추출
-
-            // 2가지 job 비교
-            // ㄴ 작업 요청 시간 <= 현재 시간 이면 ok
-            // ㄴ 비교할 작업이 없는 경우 실행
-
-
-
             int answer = 0;
-            return answer;
+            do {
+                // job[i] 요청 시간 <= 현재시간
+                // ㄴ 모두 준비 큐에 넣는다
+                while (!sortedJobList.isEmpty() &&
+                        sortedJobList.peek().getRequestTime() <= currentTime) {
+                    jobReadyQueue.add(sortedJobList.poll());
+                }
+
+                // current time < next job request time
+                // 현재 시간을 next job request time 으로 세팅
+                if (jobReadyQueue.isEmpty()) {
+                    currentTime = sortedJobList.isEmpty() ? currentTime + 1 : sortedJobList.peek().getRequestTime();
+                    continue;
+                }
+
+                // 준비 큐에서 우선 순위가 가정 높은것 추출 = min(실행 시간)
+                Job workJob = jobReadyQueue.poll();
+                currentTime += workJob.getWorkingTime();
+                // 요청 - 종료 까지 걸린 시간
+                int responseTime = currentTime - workJob.getRequestTime();
+                answer += responseTime;
+
+            } while (!jobReadyQueue.isEmpty() || !sortedJobList.isEmpty());
+
+
+            return answer / jobs.length;
         }
     }
 
@@ -55,27 +82,33 @@ public class DiskController {
 
         // [[0, 3], [1, 9], [2, 6]]
         // 9
-        // B, C, A = 10 - 1, 16 - 2, 19 - 3
+        Assert.assertEquals(9, solution.solution(new int[][]{
+                {0, 3}, {1, 9}, {2, 6}
+        }));
 
         // [[0, 3], [1, 9], [2, 6], [3, 5]]
-        // A, B, C, D = 3 + (12-1) + (18-2) + (23-3) = 50 / 4 = 12
-        // A, B, D, C = 3 + (12-1) + (17-3) + (23-2) = 49 / 4
-
-        // A, C, B, D = 3 + (9-2) + (18-1) + (23-3) = 53-6 = 47
-        // A, C, D, B = 3 + (9-2) + (14-3) + (23-2) = 49-6 = 43
-
         // 4 개짜리
-//        solution.solution(new int[][]{
-//                {0, 3}, {1, 9}, {2, 6}, {3, 5}
-//        });
+        Assert.assertEquals(10, solution.solution(new int[][]{
+                {0, 3}, {1, 9}, {2, 6}, {3, 5}
+        }));
 
 
-        // 해당 시간에 요청이 1개면 -> 그냥 실행
+        // 해당 시간에 요청이 1개면 -> 그냥 실행 (A, B 우선)
         // [[0, 9], [1, 5], [10, 7], [12, 5]]
-        // 정력 때리면 5, 5, 7, 9
-        // ㄴ 안됨
+        Assert.assertEquals(11, solution.solution(new int[][]{
+                {0, 9}, {1, 5}, {10, 7}, {12, 5}
+        }));
 
-        // 작업의 요청 시간이 같은 경우
+        // 작업의 요청 시간이 같은 경우 -> 우선 순위가 높은 B 실행
         // [[0, 9], [0, 5], [10, 7], [12, 5]]
+        Assert.assertEquals(10, solution.solution(new int[][]{
+                {0, 9}, {0, 5}, {10, 7}, {12, 5}
+        }));
+
+        // 다음 작업을 기다리는 경우
+        // [[1, 3], [1, 5], [13, 7]]
+        Assert.assertEquals(6, solution.solution(new int[][]{
+                {3, 3}, {3, 5}, {100, 7}
+        }));
     }
 }
